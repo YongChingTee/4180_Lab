@@ -30,6 +30,16 @@ namespace RFID_simple
                 RFID rfid = new RFID(); //Declare an RFID object
 
 				TextLCD tLCD = new TextLCD();
+				
+				 // set up the interfacekit object
+				InterfaceKit IFK = new InterfaceKit();
+				
+				// link the new interfacekit object to the connected board
+				IFK.open("localhost", 5001);
+				
+				// Get sensorvalue from analog input zero
+				int sensorvalue = IFK.sensors[0].Value;
+			
 
                 tLCD.Attach += new AttachEventHandler(tLCD_Attach);
                 tLCD.Detach += new DetachEventHandler(tLCD_Detach);
