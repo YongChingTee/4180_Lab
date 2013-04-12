@@ -35,10 +35,10 @@ namespace RFID_simple
 				InterfaceKit IFK = new InterfaceKit();
 				
 				// link the new interfacekit object to the connected board
-				IFK.open("localhost", 5001);
+				
 				
 				// Get sensorvalue from analog input zero
-				int sensorvalue = IFK.sensors[0].Value;
+				int sensorvalue;
 			
 
                 tLCD.Attach += new AttachEventHandler(tLCD_Attach);
@@ -54,82 +54,82 @@ namespace RFID_simple
                 rfid.TagLost += new TagEventHandler(rfid_TagLost);
                 rfid.open();
 				tLCD.open();
+				IFK.open("localhost", 5001);
 
                 //Wait for a Phidget RFID to be attached before doing anything with 
                 //the object
-                Console.WriteLine("waiting for attachment...");
-                rfid.waitForAttachment();
+ 
 				
-				if(!tLCD.Attached)
-                {
-                    Console.WriteLine("Waiting for TextLCD to be attached....");
-                    tLCD.waitForAttachment();
-                }
-				
-				Console.WriteLine("Enter text to display on line 1:");
-                string line1 = Console.ReadLine();
+				// Console.WriteLine("Enter text to display on line 1:");
+                // string line1 = Console.ReadLine();
 				
 				
-				if (tLCD.Attached)
-                {
-                    if (line1.Length > tLCD.rows[0].MaximumLength)
-                    {
-                        while (line1.Length > tLCD.rows[0].MaximumLength)
-                        {
-                            Console.WriteLine("Entered text is too long, try again...");
-                            line1 = Console.ReadLine();
-                        }
-                    }
-                    else
-                    {
-                        if (tLCD.Attached)
-                        {
-                            tLCD.rows[0].DisplayString = line1;
-                        }
-                    }
-                }
+				// if (tLCD.Attached)
+                // {
+                    // if (line1.Length > tLCD.rows[0].MaximumLength)
+                    // {
+                        // while (line1.Length > tLCD.rows[0].MaximumLength)
+                        // {
+                            // Console.WriteLine("Entered text is too long, try again...");
+                            // line1 = Console.ReadLine();
+                        // }
+                    // }
+                    // else
+                    // {
+                        // if (tLCD.Attached)
+                        // {
+                            // tLCD.rows[0].DisplayString = line1;
+                        // }
+                    // }
+                // }
 				
-				Console.WriteLine("Enter text to display on line 2:");
-                string line2 = Console.ReadLine();
+				// Console.WriteLine("Enter text to display on line 2:");
+                // string line2 = Console.ReadLine();
 				
-				if (tLCD.Attached)
-                {
-                    if (line2.Length > tLCD.rows[1].MaximumLength)
-                    {
-                        while (line2.Length > tLCD.rows[1].MaximumLength)
-                        {
-                            Console.WriteLine("Entered text is too long, try again...");
-                            line2 = Console.ReadLine();
-                        }
-                    }
-                    else
-                    {
-                        if (tLCD.Attached)
-                        {
-                            tLCD.rows[1].DisplayString = line2;
-                        }
-                    }
-                }
-
+				// if (tLCD.Attached)
+                // {
+                    // if (line2.Length > tLCD.rows[1].MaximumLength)
+                    // {
+                        // while (line2.Length > tLCD.rows[1].MaximumLength)
+                        // {
+                            // Console.WriteLine("Entered text is too long, try again...");
+                            // line2 = Console.ReadLine();
+                        // }
+                    // }
+                    // else
+                    // {
+                        // if (tLCD.Attached)
+                        // {
+                            // tLCD.rows[1].DisplayString = line2;
+                        // }
+                    // }
+                // }
+				
+				while(1)
+				{
+					sensorvalue = IFK.sensors[6].Value;
+					if(sensorvalue > 600 || sensorvalue < 400)
+						tLCD.rows[0].DisplayString = "Motion detected";
+				}
+					
                 //Close the phidget
-                tLCD.close();
-                Console.WriteLine("ok");
+               
 
-                //turn on the antenna and the led to show everything is working
-                rfid.Antenna = true;
-                rfid.LED = true;
+                // //turn on the antenna and the led to show everything is working
+                // rfid.Antenna = true;
+                // rfid.LED = true;
 
-                //keep waiting and outputting events until keyboard input is entered
-                Console.WriteLine("Press any key to end...");
-                Console.Read();
+                // //keep waiting and outputting events until keyboard input is entered
+                // Console.WriteLine("Press any key to end...");
+                // Console.Read();
 
-                //turn off the led
-                rfid.LED = false;
+                // //turn off the led
+                // rfid.LED = false;
 
-                //close the phidget and dispose of the object
-                rfid.close();
-                rfid = null;
-                Console.WriteLine("ok");
+                // //close the phidget and dispose of the object
+                // rfid.close();
+                // rfid = null;
+                // Console.WriteLine("ok");
             }
             catch (PhidgetException ex)
             {
@@ -169,15 +169,13 @@ namespace RFID_simple
         //attach event handler...display the serial number of the attached RFID phidget
         static void rfid_Attach(object sender, AttachEventArgs e)
         {
-            Console.WriteLine("RFIDReader {0} attached!",
-                                    e.Device.SerialNumber.ToString());
+            tLCD.rows[0].DisplayString = "RFID TAG: "+ e.Device.SerialNumber.ToString();
         }
 
         //detach event handler...display the serial number of the detached RFID phidget
         static void rfid_Detach(object sender, DetachEventArgs e)
         {
-            Console.WriteLine("RFID reader {0} detached!", 
-                                    e.Device.SerialNumber.ToString());
+            tLCD.rows[0].DisplayString = "";
         }
 
         //Error event handler...display the error description string
